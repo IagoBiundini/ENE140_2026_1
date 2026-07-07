@@ -19,6 +19,9 @@ from deep_translator import GoogleTranslator
 #Biblioteca usada para contar a quantidade de ocorrências de cada objeto detectado na imagem
 from collections import Counter
 
+#Biblioteca para gerar a rosta em áudio do reconhecimento da imagem
+from gtts import gTTS
+
 class BotTelegram:
     #token é um dado sensível, portanto, deixamos ele como privado
     def __init__(self, token):
@@ -96,7 +99,8 @@ class BotImagem(BotTelegram):
         #Carregar o modelo do YOLO
         modelo = YOLO("yolov8n.pt")
         #Fazer a detecção de objetos na imagem
-        resultados = modelo(caminho_foto, save=True)
+        # Forçamos o YOLO a salvar direto na pasta 'runs/predict' sem duplicar caminhos
+        resultados = modelo(caminho_foto, save=True, project="runs", name="predict", exist_ok=True)
         #Ler o que o YOLO encontrou e responder para o usuário
         await update.message.reply_text("Imagem analisada com sucesso!")
 
@@ -126,9 +130,15 @@ class BotImagem(BotTelegram):
             texto_resposta = "Nenhum objeto conhecido foi detectado."
         #Enviar a mensagem de volta pelo telegram
         await update.message.reply_text(texto_resposta)
+        tts = gTTS(text=texto_resposta, lang='pt', slow=False)
+        tts.save("resposta_bot.mp3")
+
+        # Envia o arquivo de áudio de volta para o usuário no Telegram
+        with open("resposta_bot.mp3", 'rb') as audio_resposta:
+            await update.message.reply_voice(voice=audio_resposta)
 
         # O YOLO sempre salva o resultado na pasta 'runs/detect/predict/' com o mesmo nome do arquivo original
-        caminho_resultado = "runs/detect/predict/imagem_recebida.jpg"
+        caminho_resultado = "runs/detect/runs/predict/imagem_recebida.jpg"
 
         try:
             # Abre o arquivo de imagem gerado pelo YOLO em modo de leitura binária ('rb')
