@@ -1,0 +1,5 @@
+python-telegram-bot==21.6
+ultralytics==8.3.2
+SpeechRecognition==3.17.0
+vosk==0.3.45
+numpy>=1.26.0,<2.0.0
