@@ -292,7 +292,8 @@ class BotAudio(botTelegram):
 
 
 if __name__ == "__main__":
-    TOKEN_DO_SEU_BOT = "8567874007:AAFHIDTGnFGPTc2MaH4kzjNY6G5aqiQeZ0s"
+    # Adicionar Token do seu Bot
+    TOKEN_DO_SEU_BOT = ""
 
     # Instanciamos as suas classes de IA para deixá-las prontas na memória
     bot_img = BotImagem()
